@@ -75,13 +75,8 @@ RUN cpanm Pod::Usage
 ADD build/opt-build.sh build/
 ADD build/texlive.profile /tmp/
 RUN bash build/opt-build.sh $OPT
-
-RUN Rscript -e "install.packages(pkgs = c('devtools', 'tidyverse', 'argparse', 'pheatmap', 'optparse', 'viridis', 'extrafont', 'rdgal'), repos='https://www.stats.bris.ac.uk/R/', dependencies=TRUE, clean = TRUE)"
-RUN Rscript -e "install.packages(pkgs = c('gcookbook'), repos = 'https://www.stats.bris.ac.uk/R/', dependencies=TRUE, clean = TRUE)"
-RUN Rscript -e "install.packages(pkgs = c('hrbrthemes'), repos = 'https://cinc.rud.is', dependencies=TRUE, clean = TRUE)"
-
-RUN Rscript -e "install.packages('BiocManager', repos='https://www.stats.bris.ac.uk/R/')"
-RUN Rscript -e "BiocManager::install()"
+ADD build/install_R_packages.sh build/
+RUN bash build/install_R_packages.sh
 
 FROM ubuntu:18.04 
 

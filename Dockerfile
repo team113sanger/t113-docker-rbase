@@ -59,7 +59,11 @@ RUN apt-get install -yq \
   byacc \
   libblas-dev \
   tcl-dev \ 
-  tk-dev
+  tk-dev \
+  libxml2-dev \
+  gtk-doc-tools \
+  libssl-dev \
+  libssh2-1-dev  
 
 ENV OPT /opt/wsi-t113
 ENV PATH $OPT/bin:$OPT/texlive/2019/bin/x86_64-linux:$PATH
@@ -73,6 +77,11 @@ ADD build/texlive.profile /tmp/
 RUN bash build/opt-build.sh $OPT
 
 RUN Rscript -e "install.packages(pkgs = c('devtools', 'tidyverse', 'argparse', 'pheatmap', 'optparse', 'viridis', 'extrafont', 'rdgal'), repos='https://www.stats.bris.ac.uk/R/', dependencies=TRUE, clean = TRUE)"
+RUN Rscript -e "install.packages(pkgs = c('gcookbook'), repos = 'https://www.stats.bris.ac.uk/R/', dependencies=TRUE, clean = TRUE)"
+RUN Rscript -e "install.packages(pkgs = c('hrbrthemes'), repos = 'https://cinc.rud.is', dependencies=TRUE, clean = TRUE)"
+
+RUN Rscript -e "install.packages('BiocManager', repos='https://www.stats.bris.ac.uk/R/')"
+RUN Rscript -e "BiocManager::install()"
 
 FROM ubuntu:18.04 
 
@@ -100,7 +109,12 @@ RUN apt-get install -yq --no-install-recommends \
   tk \
   libblas3 \
   gfortran \
-  g++
+  g++ \
+  libssh2-1 \
+  libxml2 \
+  libssl1.0.0 \
+  gtk-doc-tools
+  
 
 ENV OPT /opt/wsi-t113
 ENV PATH $OPT/bin:$OPT/python3/bin:$OPT/texlive/2019/bin/x86_64-linux:$PATH

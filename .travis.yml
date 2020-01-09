@@ -7,13 +7,13 @@ sudo: false
 language: ruby
 
 services:
-	- docker
+ - docker
 
 script:
-	- echo 'Build and check docker image'
-	- docker build -t r-base .
-	- docker images | grep -c r-base
-	- echo 'Verify program(s) from this repo'
-	- docker run -t --rm r-base R --version
-	- docker run -t --rm r-base Rscript --version
+ - echo 'Build and check docker image'
+ - docker build -t r-base .
+ - docker images | grep -c r-base
+ - echo 'Verify program(s) from this repo'
+ - docker run -t --rm r-base R --version
+ - docker run -t --rm r-base Rscript --version
 

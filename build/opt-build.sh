@@ -54,7 +54,7 @@ set -u
 
 # texlive
 if [ ! -e $SETUP_DIR/texlive.success ]; then
-  curl -sSL --retry 10 -o texlive.tar.gz http://mirror.ctan.org/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz
+  curl -sSL --retry 10 -o texlive.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
   mkdir texlive
   tar --strip-components 1 -C texlive -xzf texlive.tar.gz
   cd texlive

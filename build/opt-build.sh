@@ -54,11 +54,11 @@ set -u
 
 # texlive
 if [ ! -e $SETUP_DIR/texlive.success ]; then
-  curl -sSL --retry 10 -o texlive.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+  curl -sSL --retry 10 -o texlive.tar.gz  http://mirror.ox.ac.uk/sites/ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
   mkdir texlive
   tar --strip-components 1 -C texlive -xzf texlive.tar.gz
   cd texlive
-  ./install-tl --profile=/tmp/texlive.profile
+  ./install-tl -repository http://mirror.ox.ac.uk/sites/ctan.org/systems/texlive/tlnet --profile=/tmp/texlive.profile
   tlmgr install titling framed inconsolata xkeyval
   tlmgr install collection-fontsrecommended
   tlmgr option -- autobackup 0

@@ -81,7 +81,7 @@ RUN bash build/install_R_packages.sh
 FROM ubuntu:18.04 
 
 LABEL maintainer="vo1@sanger.ac.uk" \
-      version="2.0.0" \
+      version="2.0.2" \
       description="R-base container"
 
 MAINTAINER  Victoria Offord <vo1@sanger.ac.uk>

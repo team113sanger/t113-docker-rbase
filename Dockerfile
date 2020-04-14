@@ -103,6 +103,7 @@ RUN apt-get install -yq --no-install-recommends \
   tcl \
   tk \
   libblas3 \
+  libblas-dev \
   gfortran \
   g++ \
   libssh2-1 \

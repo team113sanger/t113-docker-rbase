@@ -81,7 +81,7 @@ RUN bash build/install_R_packages.sh
 FROM ubuntu:18.04 
 
 LABEL maintainer="vo1@sanger.ac.uk" \
-      version="2.0.2" \
+      version="2.0.3" \
       description="R-base container"
 
 MAINTAINER  Victoria Offord <vo1@sanger.ac.uk>
@@ -103,6 +103,7 @@ RUN apt-get install -yq --no-install-recommends \
   tcl \
   tk \
   libblas3 \
+  libblas-dev \
   gfortran \
   g++ \
   libssh2-1 \

@@ -1,8 +1,8 @@
 FROM ubuntu:20.04
 
 LABEL maintainer="vo1@sanger.ac.uk" \
-      version="1.0.0" \
-      description="Base R 4.x.x"
+      version="4.0.2.1" \
+      description="Base R 4.0.2"
 
 MAINTAINER  Victoria Offord <vo1@sanger.ac.uk>
 

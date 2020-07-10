@@ -1,4 +1,3 @@
-
 #! /bin/bash
 
 set -xe
@@ -47,49 +46,15 @@ set +u
 export LD_LIBRARY_PATH=`echo $INST_PATH/lib:$LD_LIBRARY_PATH | perl -pe 's/:\$//;'`
 export LIBRARY_PATH=`echo $INST_PATH/lib:$LIBRARY_PATH | perl -pe 's/:\$//;'`
 export C_INCLUDE_PATH=`echo $INST_PATH/include:$C_INCLUDE_PATH | perl -pe 's/:\$//;'`
-export PATH=`echo $INST_PATH/bin:$PATH | perl -pe 's/:\$//;'`
+export PATH=`echo $INST_PATH/bin:$INST_PATH/python3/bin:$PATH | perl -pe 's/:\$//;'`
 export MANPATH=`echo $INST_PATH/man:$INST_PATH/share/man:$MANPATH | perl -pe 's/:\$//;'`
 export PERL5LIB=`echo $INST_PATH/lib/perl5:$PERL5LIB | perl -pe 's/:\$//;'`
+export PYTHONPATH=`echo $INST_PATH/lib/perl5:$PYTHONPATH | perl -pe 's/:\$//;'`
 set -u
 
-# texlive
-if [ ! -e $SETUP_DIR/texlive.success ]; then
-  curl -sSL --retry 10 -o texlive.tar.gz  http://mirror.ox.ac.uk/sites/ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
-  mkdir texlive
-  tar --strip-components 1 -C texlive -xzf texlive.tar.gz
-  cd texlive
-  ./install-tl -repository http://mirror.ox.ac.uk/sites/ctan.org/systems/texlive/tlnet --profile=/tmp/texlive.profile
-  tlmgr install titling framed inconsolata xkeyval
-  tlmgr install collection-fontsrecommended
-  tlmgr option -- autobackup 0
-  cd $SETUP_DIR
-  rm -rf texlive.* texlive/*
-  touch $SETUP_DIR/texlive.success
+# Python requirements
+if [ ! -e $SETUP_DIR/python_requirements.success ]; then
+  pip3 install --target=$INST_PATH/python3 --no-cache-dir -r $SCRIPT_PATH/requirements.txt
+  touch $SETUP_DIR/python_requirements.success
 fi
 
-
-# R
-if [ ! -e $SETUP_DIR/R.success ]; then
-  curl -sSL --retry 10 -o Rdnld.tar.gz https://cran.r-project.org/src/base/R-3/R-${VER_R}.tar.gz
-  mkdir Rdnld
-  tar --strip-components 1 -C Rdnld -xzf Rdnld.tar.gz
-  cd Rdnld
-  ./configure   --enable-R-shlib \
-                --enable-memory-profiling \
-                --with-readline \
-                --with-blas \
-                --with-tcltk \
-                --disable-nls \
-                --with-cairo \
-                --with-recommended-packages \
-		--prefix=$INST_PATH
-
-  make -j4
-  make install
-  make install-libR
-  pwd
-#  make check
-
-#  rm -rf Rdnld.* Rdnld/*
-  touch $SETUP_DIR/R.success
-fi

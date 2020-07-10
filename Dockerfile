@@ -1,4 +1,10 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:20.04
+
+LABEL maintainer="vo1@sanger.ac.uk" \
+      version="1.0.0" \
+      description="Base R 4.x.x"
+
+MAINTAINER  Victoria Offord <vo1@sanger.ac.uk>
 
 USER root
 
@@ -7,124 +13,80 @@ ENV LC_ALL C
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
-# ALL tool versions used by opt-build.sh
-ENV VER_R="3.6.0"
-
+# Prevent interactive options
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -yq update
+# Run initial system updates
+RUN apt-get update && \
+  apt-get install -yq --no-install-recommends lsb-release && \
+  apt-get update && \
+  apt-get install -qy --no-install-recommends \
+  software-properties-common \
+  dirmngr \
+  apt-transport-https \
+  update-manager-core \
+  locales \
+  hdf5-helpers \
+  hdf5-tools \
+  libhdf5-103 \
+  libhdf5-cpp-103 \
+  libhdf5-doc \
+  libhdf5-java \
+  libhdf5-jni \
+  libhdf5-mpich-103 \
+  libhdf5-openmpi-103 \
+  unattended-upgrades && \
+  unattended-upgrade -d -v && \
+  apt-get remove -yq unattended-upgrades && \
+  apt-get autoremove -yq
+
+RUN sed -i 's/Prompt=lts/Prompt=normal/' /etc/update-manager/release-upgrades
+RUN do-release-upgrade -d -f DistUpgradeViewNonInteractive
+
+RUN apt-get purge r-base* r-recommended r-cran-*
+RUN apt-get autoremove -yq
+RUN apt-get update
+
+RUN apt-get install -yq gpg-agent
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv 51716619E084DAB9
+RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+RUN apt-get update
 
 RUN apt-get install -yq \
-  build-essential \
-  gfortran \
-  perl \
-  curl \
-  less \
-  tar \
-  unzip \
-  zip \
-  g++ \
-  gawk 
-
-RUN apt-get -yq update
-
-RUN apt-get install -yq software-properties-common
-RUN add-apt-repository ppa:mozillateam/firefox-next
-
-RUN apt-get install -yq \
-  default-jre \
-  default-jdk \
-  firefox \
-  okular
-
-# R-specific libraries
-RUN apt-get install -yq \
-  libreadline-dev \
-  libx11-dev \
-  libxt-dev \
-  zlib1g-dev \
-  libbz2-dev \
-  liblzma-dev \
-  libpcre3-dev \
-  libcurl4-openssl-dev \
-  libcairo2-dev \
-  libjpeg-dev \
-  libpango1.0-dev \
-  libpangocairo-1.0-0 \
-  libpaper-utils \
-  libpng-dev \
-  libtiff-dev \
-  texinfo \
-  libbison-dev \
-  byacc \
   libblas-dev \
-  tcl-dev \ 
-  tk-dev \
-  libxml2-dev \
-  gtk-doc-tools \
-  libssl-dev \
-  libssh2-1-dev  
+  libcurl4 \
+  libxml2 \
+  libcairo2 \
+  libssl1.1 \
+  openssl \
+  r-base \
+  r-base-core \
+  r-recommended \
+  python3 \
+  python3-distutils \
+  python3-pip 
+
+RUN pip3 install --upgrade pip
 
 ENV OPT /opt/wsi-t113
-ENV PATH $OPT/bin:$OPT/texlive/2019/bin/x86_64-linux:$PATH
+
+ENV PATH $OPT/bin:$OPT/python3/bin:$PATH
 ENV LD_LIBRARY_PATH $OPT/lib
+ENV PYTHONPATH="/usr/src/app:${PYTHONPATH}"
+ENV R_LIBS $OPT/R-lib
+ENV R_LIBS_USER $R_LIBS
 
-RUN curl -L http://cpanmin.us | perl - App::cpanminus 
-RUN cpanm Pod::Usage
+RUN mkdir -p $R_LIBS_USER
 
-ADD build/opt-build.sh build/
-ADD build/texlive.profile /tmp/
+ADD build/* build/
 RUN bash build/opt-build.sh $OPT
-ADD build/install_R_packages.sh build/
 RUN bash build/install_R_packages.sh
 
-FROM ubuntu:18.04 
-
-LABEL maintainer="vo1@sanger.ac.uk" \
-      version="2.0.3" \
-      description="R-base container"
-
-MAINTAINER  Victoria Offord <vo1@sanger.ac.uk>
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get -yq update
-RUN apt-get install -yq --no-install-recommends \
-  curl \
-  less \
-  tar \
-  unzip \
-  zip \
-  firefox \
-  okular \
-  default-jre \
-  xorg \
-  openbox \
-  tcl \
-  tk \
-  libblas3 \
-  libblas-dev \
-  gfortran \
-  g++ \
-  libssh2-1 \
-  libxml2 \
-  libssl1.0.0 \
-  gtk-doc-tools
-  
-
-ENV OPT /opt/wsi-t113
-ENV PATH $OPT/bin:$OPT/python3/bin:$OPT/texlive/2019/bin/x86_64-linux:$PATH
-ENV LD_LIBRARY_PATH $OPT/lib
-
-ENV LC_ALL C
-ENV LC_ALL C.UTF-8
-ENV LANG C.UTF-8
 ENV DISPLAY=:0
 
-RUN mkdir -p $OPT
-COPY --from=builder $OPT $OPT
-
-RUN find / -name *tclConfig* > /tmp/tcl.all
+#Create some usefull symlinks
+RUN cd /usr/local/bin && \
+    ln -s /usr/bin/python3 python
 
 # USER CONFIGURATION
 RUN adduser --disabled-password --gecos '' ubuntu && chsh -s /bin/bash && mkdir -p /home/ubuntu
@@ -133,3 +95,4 @@ USER ubuntu
 WORKDIR /home/ubuntu
 
 CMD ["/bin/bash"]
+

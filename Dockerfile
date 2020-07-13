@@ -35,6 +35,12 @@ RUN apt-get update && \
   libhdf5-jni \
   libhdf5-mpich-103 \
   libhdf5-openmpi-103 \
+  libcurl4-openssl-dev \
+  libssl-dev \
+  libblas-dev \
+  libcurl4 \
+  libxml2 \
+  libcairo2 \
   unattended-upgrades && \
   unattended-upgrade -d -v && \
   apt-get remove -yq unattended-upgrades && \
@@ -53,12 +59,6 @@ RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-c
 RUN apt-get update
 
 RUN apt-get install -yq \
-  libblas-dev \
-  libcurl4 \
-  libxml2 \
-  libcairo2 \
-  libssl1.1 \
-  openssl \
   r-base \
   r-base-core \
   r-recommended \

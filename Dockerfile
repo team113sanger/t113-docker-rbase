@@ -17,9 +17,9 @@ ENV LANG C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Run initial system updates
-RUN apt-get update && \
+RUN apt-get update -qq && \
   apt-get install -yqq --no-install-recommends lsb-release && \
-  apt-get update && \
+  apt-get update -qq && \
   apt-get install -qqy --no-install-recommends \
   software-properties-common \
   dirmngr \

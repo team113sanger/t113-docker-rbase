@@ -26,6 +26,7 @@ RUN apt-get update && \
   apt-transport-https \
   update-manager-core \
   locales \
+  subversion \
   hdf5-helpers \
   hdf5-tools \
   libhdf5-103 \
@@ -39,8 +40,8 @@ RUN apt-get update && \
   libssl-dev \
   libblas-dev \
   libcurl4 \
-  libxml2 \
-  libcairo2 \
+  libxml2-dev \
+  libcairo2-dev \
   unattended-upgrades && \
   unattended-upgrade -d -v && \
   apt-get remove -yq unattended-upgrades && \
@@ -59,12 +60,25 @@ RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-c
 RUN apt-get update
 
 RUN apt-get install -yq \
+  subversion \
+  libgdal-dev \
+  libudunits2-0 \
+  libfontconfig1 \
+  libfreetype6-dev \
+  libgdal-dev \
+  libudunits2-dev \
+  libfontconfig1-dev \
+  libfreetype6-dev \
+  default-jre \
+  default-jdk \
   r-base \
   r-base-core \
   r-recommended \
   python3 \
   python3-distutils \
   python3-pip 
+
+RUN R CMD javareconf
 
 RUN pip3 install --upgrade pip
 

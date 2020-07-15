@@ -12,10 +12,5 @@ services:
 script:
  - while sleep 9m; do echo "=====[ $SECONDS seconds, docker still building... ]====="; done &
  - echo 'Build and check docker image'
- - docker build -t r-base .
- - kill %1
- - docker images | grep -c r-base
- - echo 'Verify program(s) from this repo'
- - docker run -t --rm r-base R --version
- - docker run -t --rm r-base Rscript --version
+ - docker build --target builder -t builder .
 

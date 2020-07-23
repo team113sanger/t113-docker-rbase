@@ -47,6 +47,9 @@ RUN apt-get update -qq && \
   apt-get remove -yq unattended-upgrades && \
   apt-get autoremove -yq
 
+RUN apt-get upgrade -y
+RUN apt-get dist-upgrade -y
+
 RUN sed -i 's/Prompt=lts/Prompt=normal/' /etc/update-manager/release-upgrades
 RUN do-release-upgrade -d -f DistUpgradeViewNonInteractive
 
